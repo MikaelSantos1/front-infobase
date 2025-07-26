@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 
+import { Providers } from "@/providers";
+
 
 export const metadata: Metadata = {
   title: "Task flow",
- 
+
 };
 
 export default function RootLayout({
@@ -16,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-     
+
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
