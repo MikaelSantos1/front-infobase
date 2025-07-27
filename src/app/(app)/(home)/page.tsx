@@ -20,7 +20,7 @@ export default function Page() {
 
       </div>
 
-      <p className="text-muted-foreground text-lg">Gerencie seus projetos e acompanhe o progresso das tarefas</p>
+      <p className="text-muted-foreground text-lg mb-4">Gerencie seus projetos e acompanhe o progresso das tarefas</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {
           isLoading ? [1, 2, 3, 4, 5, 6].map((_, index) => (
