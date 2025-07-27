@@ -46,4 +46,5 @@ Use o usuário administrador criado pelo seed do backend para acessar a aplicaç
 -   **Email:** admin@admin.com
     
 -   **Senha:** 123456
-    
+
+novos usuários são criados com a senha padrão: default_password
