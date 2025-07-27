@@ -2,12 +2,12 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "http://localhost:3333/",
+  baseURL: "http://localhost:3333",
 });
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("authToken");
-
+    const user = localStorage.getItem("auth:user");
+    const token = user ? JSON.parse(user).token : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,7 +29,8 @@ api.interceptors.response.use(
       error.response &&
       error.response.status === 401
     ) {
-     
+     localStorage.removeItem('auth:user')
+      window.location.href = "/sign-in";
     }
 
     return Promise.reject(error);

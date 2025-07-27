@@ -1,53 +1,79 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '../ui/button';
+import { Plus } from 'lucide-react';
+import { useAuthStore } from '@/store/auth-store';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { changeTaskStatus } from '@/services/task';
+import { DialogNewProject } from './dialog-new-project';
+import { Dialog } from '@radix-ui/react-dialog';
+import { DialogNewTask } from './dialog-new-task';
+import { DialogDeleteProject } from './dialog-delete-project';
+
+type TaskStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
 
 interface Task {
-  id: string
-  title: string
-  completed: boolean
+  id: string;
+  title: string;
+  status: TaskStatus;
+  created_at: string;
+  updated_at: string;
+  projectId: string;
 }
 
 interface Project {
-  id: string
-  title: string
-  description: string
-  tasks: Task[]
-  color: string
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+  tasks: Task[];
+
 }
 
 interface ProjectCardProps {
-  project: Project
+  project: Project;
 }
 
-export function ProjectCard({ project: initialProject }: ProjectCardProps) {
-  const [project, setProject] = useState(initialProject)
+export function ProjectCard({ project }: ProjectCardProps) {
+  const { user } = useAuthStore()
+  const query = useQueryClient()
+  const { mutate } = useMutation({
+    mutationFn: (data: Task) => changeTaskStatus(data.id, data.status),
+    onSuccess: () => {
+      query.invalidateQueries({ queryKey: ['useProjects'] })
+    },
 
-  const toggleTask = (taskId: string) => {
-    setProject((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) => (task.id === taskId ? { ...task, completed: !task.completed } : task)),
-    }))
+  })
+  const toggleTask = (task: Task) => {
+    const newStatus = task.status === 'COMPLETED' ? 'IN_PROGRESS' : 'COMPLETED';
+    mutate({ ...task, status: newStatus });
   }
 
-  const completedTasks = project.tasks.filter((task) => task.completed).length
-  const totalTasks = project.tasks.length
-  const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
+  const completedTasks = project.tasks.filter((task) => task.status === 'COMPLETED').length;
+  const totalTasks = project.tasks.length;
+  const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
   return (
     <Card className="w-full">
+       <div className='flex w-full px-4'>
+
+    
+      <DialogNewProject initialData={{ id: project.id, projectName: project.name }} />
+       <DialogDeleteProject projectId={project.id}/>
+          </div>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">{project.title}</CardTitle>
-          <Badge variant="secondary" className={`${project.color}`}>
+          <CardTitle className="text-lg font-semibold">{project.name}</CardTitle>
+          <Badge variant="secondary" >
             {completedTasks}/{totalTasks}
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">{project.description}</p>
+
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Progresso</span>
@@ -58,16 +84,25 @@ export function ProjectCard({ project: initialProject }: ProjectCardProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          <h4 className="font-medium text-sm">Tarefas:</h4>
+          <div className='flex items-center justify-between'>
+            <h4 className="font-medium text-sm ">Tarefas:</h4>
+            {
+              user?.role !== 'COLABORATOR' && <DialogNewTask projectId={project.id} />}
+          </div>
+
+
           <div className="space-y-2">
             {project.tasks.map((task) => (
               <div key={task.id} className="flex items-center space-x-3">
-                <Checkbox id={task.id} checked={task.completed} onCheckedChange={() => toggleTask(task.id)} />
+                <Checkbox
+                  id={task.id}
+                  checked={task.status === 'COMPLETED'}
+                  onCheckedChange={() => toggleTask(task)}
+                />
                 <label
                   htmlFor={task.id}
-                  className={`text-sm cursor-pointer flex-1 ${
-                    task.completed ? "line-through text-muted-foreground" : "text-foreground"
-                  }`}
+                  className={`text-sm cursor-pointer flex-1 ${task.status === 'COMPLETED' ? 'line-through text-muted-foreground' : 'text-foreground'
+                    }`}
                 >
                   {task.title}
                 </label>
@@ -77,5 +112,5 @@ export function ProjectCard({ project: initialProject }: ProjectCardProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

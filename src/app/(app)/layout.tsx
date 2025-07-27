@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Sidebar } from '@/components/ui/sidebar';
+import { AppSidebar, Sidebar } from '@/components/ui/app-sidebar';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 export default function AppLayout({
   children,
   sheet,
@@ -29,9 +30,11 @@ export default function AppLayout({
   )
 
   return (
-    <div className="flex h-screen">
-    <Sidebar />
-    <main className="flex-1 overflow-auto">
+    <div className="flex w-full h-screen">
+    <AppSidebar />
+    
+    <main className="w-full overflow-auto">
+      <SidebarTrigger className="ml-1 size-10"/>
       {children}
       {sheet}
     </main>

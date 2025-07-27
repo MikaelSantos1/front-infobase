@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuthStore } from '@/store/auth-store'
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner'
 
 const signInSchema = z.object({
     email: z.string({ message: 'E-mail é obrigatório' }).email({ message: 'Formato de e-mail invalido' }),
@@ -18,6 +19,7 @@ type SignInSchema = z.infer<typeof signInSchema>
 
 export default function Page() {
     const router = useRouter();
+
     const { register, handleSubmit, formState: { errors } } = useForm<SignInSchema>({
         resolver: zodResolver(signInSchema)
     })
@@ -32,10 +34,8 @@ export default function Page() {
             router.push('/')
         },
         onError: (err: any) => {
-
-            if (err.response.data.message === "Wrong credentials") {
-                console.log('caia auiq')
-
+            if (err.response.data.message === "Invalid credentials.") {
+                toast('Credenciais invalidas')
 
             }
         }
