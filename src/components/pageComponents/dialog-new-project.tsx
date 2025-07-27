@@ -83,7 +83,7 @@ export function DialogNewProject({ initialData }: DialogProjectFormProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                {isEdit && user?.role!=='COLABORATOR'? (<div className="flex flex-1 align-items-end justify-end px-4">
+                {isEdit && user?.role!=='COLLABORATOR'? (<div className="flex flex-1 align-items-end justify-end px-4">
                     <Pencil size={14} />
                 </div>) : <Button>Criar novo projeto</Button>}
             </DialogTrigger>

@@ -5,7 +5,7 @@ interface User {
   id: string
   name: string
   email: string
-  role: 'ADMIN' | 'MANAGER' | 'COLABORATOR'
+  role: 'ADMIN' | 'MANAGER' | 'COLLABORATOR'
   token: string
 
 }

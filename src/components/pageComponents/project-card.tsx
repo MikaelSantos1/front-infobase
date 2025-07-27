@@ -60,12 +60,14 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <Card className="w-full">
-       <div className='flex w-full px-4'>
+      {
+        user?.role !== "COLLABORATOR" &&
+        <div className='flex w-full px-4'>
+          <DialogNewProject initialData={{ id: project.id, projectName: project.name }} />
+          <DialogDeleteProject projectId={project.id} />
+        </div>
+      }
 
-    
-      <DialogNewProject initialData={{ id: project.id, projectName: project.name }} />
-       <DialogDeleteProject projectId={project.id}/>
-          </div>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">{project.name}</CardTitle>
@@ -87,7 +89,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <div className='flex items-center justify-between'>
             <h4 className="font-medium text-sm ">Tarefas:</h4>
             {
-              user?.role !== 'COLABORATOR' && <DialogNewTask projectId={project.id} />}
+              user?.role !== 'COLLABORATOR' && <DialogNewTask projectId={project.id} />}
           </div>
 
 
