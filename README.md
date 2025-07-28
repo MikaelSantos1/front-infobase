@@ -48,3 +48,11 @@ Use o usuário administrador criado pelo seed do backend para acessar a aplicaç
 -   **Senha:** 123456
 
 novos usuários são criados com a senha padrão: default_password
+
+
+## Testes
+
+```bash
+npm run test
+
+```
